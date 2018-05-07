@@ -1,0 +1,61 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "qLpIpMBNWC2bTBwzoDbfj0tfVQ4=",
+			"path": "github.com/go-pg/pg",
+			"revision": "f8d837b1ccbbed38097f6b568e8a527b086f4b0c",
+			"revisionTime": "2018-05-05T10:24:19Z"
+		},
+		{
+			"checksumSHA1": "s3ccNxUVGClLrztjnxkIge/LZik=",
+			"path": "github.com/go-pg/pg/internal",
+			"revision": "f8d837b1ccbbed38097f6b568e8a527b086f4b0c",
+			"revisionTime": "2018-05-05T10:24:19Z"
+		},
+		{
+			"checksumSHA1": "HGtwOnzZHu3KF9ZVNQ1thdekjn4=",
+			"path": "github.com/go-pg/pg/internal/parser",
+			"revision": "f8d837b1ccbbed38097f6b568e8a527b086f4b0c",
+			"revisionTime": "2018-05-05T10:24:19Z"
+		},
+		{
+			"checksumSHA1": "8BS7nKMcEVACAzICl7TsCT6gNP4=",
+			"path": "github.com/go-pg/pg/internal/pool",
+			"revision": "f8d837b1ccbbed38097f6b568e8a527b086f4b0c",
+			"revisionTime": "2018-05-05T10:24:19Z"
+		},
+		{
+			"checksumSHA1": "yBRaB2gT6IHuVmU7ObFvFvX3GeE=",
+			"path": "github.com/go-pg/pg/orm",
+			"revision": "f8d837b1ccbbed38097f6b568e8a527b086f4b0c",
+			"revisionTime": "2018-05-05T10:24:19Z"
+		},
+		{
+			"checksumSHA1": "r4OxPT9HUcRKU/rV5y6kc327AFE=",
+			"path": "github.com/go-pg/pg/types",
+			"revision": "f8d837b1ccbbed38097f6b568e8a527b086f4b0c",
+			"revisionTime": "2018-05-05T10:24:19Z"
+		},
+		{
+			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
+			"path": "github.com/gorilla/context",
+			"revision": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42",
+			"revisionTime": "2016-08-17T18:46:32Z"
+		},
+		{
+			"checksumSHA1": "UgeTyV3+iIwmYB23arP3MbwS+Go=",
+			"path": "github.com/gorilla/mux",
+			"revision": "ded0c29b24f96f46cf349e6701b099db601cf8ec",
+			"revisionTime": "2018-05-01T03:11:36Z"
+		},
+		{
+			"checksumSHA1": "4eelJOSLZoDzLuaJvgilOBVNovU=",
+			"path": "github.com/jinzhu/inflection",
+			"revision": "04140366298a54a039076d798123ffa108fff46c",
+			"revisionTime": "2018-03-08T03:36:59Z"
+		}
+	],
+	"rootPath": "github.com/WTIFS/tantan-demo"
+}
