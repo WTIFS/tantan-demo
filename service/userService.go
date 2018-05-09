@@ -6,7 +6,6 @@ import (
 )
 
 func AddUser(user *model.User) (*model.User, error) {
-	user.Type = "user"
 	return dao.AddUser(user)
 }
 

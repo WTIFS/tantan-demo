@@ -17,10 +17,10 @@ func main() {
 	r.HandleFunc("/", HomeHandler)
 	r.HandleFunc("/articles/{category}", categoryHandler)
 
-	s.HandleFunc("/", userAdditionHandler).Methods("POST")
-	s.HandleFunc("/", userListHandler).Methods("GET")
-	s.HandleFunc("/{user_id}/relationships", relationshipListAddHandler).Methods("GET")
-	s.HandleFunc("/{user_id}/relationships/{other_user_id}", relationshipUpdateAddHandler).Methods("PUT")
+	s.HandleFunc("", userAdditionHandler).Methods("POST")
+	s.HandleFunc("", userListHandler).Methods("GET")
+	s.HandleFunc("/{user_id}/relationships", relationshipListHandler).Methods("GET")
+	s.HandleFunc("/{user_id}/relationships/{other_user_id}", relationshipAddHandler).Methods("PUT")
 
 	serverMsg := http.ListenAndServe(":8000", r)
 	log.Fatal(serverMsg)
@@ -69,11 +69,16 @@ func userAdditionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
+	if (u.Name == "") {
+		respondWithError(w, http.StatusBadRequest, "Params is empty")
+		return
+	}
+
 	if _, err := service.AddUser(u); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
+	u.SetType()
 	respondWithJSON(w, http.StatusCreated, u)
 }
 
@@ -102,6 +107,9 @@ func userListHandler(w http.ResponseWriter, r *http.Request) {
 	if (err != nil) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 	} else {
+		for i := range userList {
+			userList[i].SetType()
+		}
 		respondWithJSON(w, http.StatusOK, userList)
 	}
 }
@@ -132,18 +140,21 @@ $curl -XGET "http://localhost:80/users/11231244213/relationships"
  }
 ]
  */
-func relationshipListAddHandler(w http.ResponseWriter, r *http.Request) {
+func relationshipListHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userIdStr := vars["user_id"]
 	userId, err := strconv.ParseInt(userIdStr, 10, 64)
 	if (err != nil) {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 	} else {
-		relationList, err:= service.ListRelationsByUserId(userId)
+		relationshipList, err:= service.ListRelationsByUserId(userId)
 		if (err != nil) {
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 		} else {
-			respondWithJSON(w, http.StatusOK, relationList)
+			for i := range relationshipList {
+				relationshipList[i].SetType()
+			}
+			respondWithJSON(w, http.StatusOK, relationshipList)
 		}
 	}
 }
@@ -179,7 +190,40 @@ $curl -XPUT -d '{"state":"disliked"}'
  "type": "relationship"
 }
  */
-func relationshipUpdateAddHandler(w http.ResponseWriter, r *http.Request) {
+func relationshipAddHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userIdStr := vars["user_id"]
+	otherUserIdStr := vars["other_user_id"]
+	userId, err1 := strconv.ParseInt(userIdStr, 10, 64)
+	otherUserId, err2 := strconv.ParseInt(otherUserIdStr, 10, 64)
+	if (err1 != nil) {
+		respondWithError(w, http.StatusInternalServerError, err1.Error())
+		return
+	} else if (err2 != nil) {
+		respondWithError(w, http.StatusInternalServerError, err2.Error())
+		return
+	}
+	var relationship *model.Relationship
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&relationship); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	if (relationship.State == "") {
+		respondWithError(w, http.StatusBadRequest, "Params is empty")
+		return
+	}
+	defer r.Body.Close()
+	relationship.FromUserId = userId
+	relationship.ToUserId = otherUserId
+
+	res, err3 := service.UpsertRelationship(relationship)
+	if (err3 != nil) {
+		respondWithError(w, http.StatusBadRequest, err3.Error())
+		return
+	}
+	res.SetType()
+	respondWithJSON(w, http.StatusOK, res)
 
 }
 

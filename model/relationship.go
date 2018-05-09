@@ -1,18 +1,29 @@
 package model
 
 import (
-	"fmt"
 	"time"
+	"fmt"
 )
 
-type Relation struct {
-	UserId int64
-	OtherUserId int64
-	Relation int16
-	IsMatched bool
-	AddTime time.Time `sql:"default:now()"`
+type Relationship struct {
+	FromUserId int64 `json:"-"`
+	ToUserId int64 `json:"user_id"`
+	State string `json:"state"`
+	AddTime time.Time `sql:"default:now()" json:"-"`
+	Type string `sql:"-" json:"type"`
 }
 
-func (s Relation) String() string {
-	return fmt.Sprintf("Relation<%v %v %d %v>", s.UserId, s.OtherUserId, s.Relation, s.IsMatched)
+//type RelationshipExternal struct {
+//	UserId int64 `json:"user_id"`
+//	State string `json:"state"`
+//	Type string `json:"type"`
+//}
+//
+func (r *Relationship) SetType() {
+	r.Type = "relationship"
+	fmt.Println(r)
 }
+
+//func (s Relationship) String() string {
+//	return fmt.Sprintf("Relation<%v %v %v>", s.UserId, s.OtherUserId, s.State)
+//}
