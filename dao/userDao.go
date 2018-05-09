@@ -3,32 +3,39 @@ package dao
 import (
 	"fmt"
 	"github.com/go-pg/pg"
-	"github.com/go-pg/pg/orm"
+	"github.com/WTIFS/tantan-demo/model"
 )
 
-type User struct {
-	//tableName struct{} `sql:"userasdf, alias:u"`
-	Id *int64
-	Name string
-	Mobile string
+//add a user
+func AddUser(user *model.User) (*model.User, error) {
+	db := GetConn()
+	_, err := db.Model(user).Returning("*").Insert()
+	if (err != nil) {
+		panic(err)
+	}
+	return user, err
 }
 
-func (u User) String() string {
-	return fmt.Sprintf("User<%d %s %v>", u.Id, u.Name, u.Mobile)
+//list all users
+func ListUsers() ([]model.User, error) {
+	db := GetConn()
+	defer db.Close()
+
+	var err error
+	var users []model.User
+	var dbModel = db.Model(&users)
+	err = dbModel.Select()
+	if err != nil {
+		panic(err)
+	}
+	//fmt.Println(users)
+	return users, err
 }
 
-type Relation struct {
-	user_id int64
-	other_user_id int64
-	relation int16
-	is_matched bool
-}
 
-func (s Relation) String() string {
-	return fmt.Sprintf("Relation<%d %s %s %s>", s.user_id, s.other_user_id, s.relation, s.is_matched)
-}
 
 func ExampleDB_Model() {
+	var err error
 	db := pg.Connect(&pg.Options{
 		Addr: "localhost:5432",
 		User: "postgres",
@@ -42,12 +49,11 @@ func ExampleDB_Model() {
 	//	panic(err)
 	//}
 
-	//user1 := &User{
-	//	Id: nil,
+	//user1 := &model.User{
 	//	Name: "test1",
 	//	Mobile: "13838383388",
 	//}
-	//err := db.Insert(user1)
+	//err = db.Insert(user1)
 	//if err != nil {
 	//	panic(err)
 	//}
@@ -80,13 +86,23 @@ func ExampleDB_Model() {
 	}*/
 
 	// Select all users.
-	var users []User
+	var users []model.User
 	var dbModel = db.Model(&users)
-	err := dbModel.Select()
+	err = dbModel.Select()
 	if err != nil {
 		panic(err)
 	}
 
+	//无效的query
+	//var user2 User
+	//a,b := db.Query(pg.Scan(&user2), "SELECT id, name, mobile FROM users WHERE id=?", 1)
+	//fmt.Println(a)
+	//fmt.Println(b)
+
+	var userName, userMobile string
+	err = db.Model((*model.User)(nil)).Column("name", "mobile").Where("id=?", 1).Select(&userName, &userMobile)
+	fmt.Println(userName)
+	fmt.Println(userMobile)
 	// Select relation and associated author in one query.
 	//relation := new(Relation)
 	//err = db.Model(relation).
@@ -99,20 +115,9 @@ func ExampleDB_Model() {
 
 	//fmt.Println(user1.String())
 	fmt.Println(users)
+	//fmt.Println(user2)
 	//fmt.Println(user)
 	// Output: User<1 admin [admin1@admin admin2@admin]>
 	// [User<1 admin [admin1@admin admin2@admin]> User<2 root [root1@root root2@root]>]
 	// Relation<1 Cool story User<1 admin [admin1@admin admin2@admin]>>
-}
-
-func createSchema(db *pg.DB) error {
-	for _, model := range []interface{}{(*User)(nil), (*Relation)(nil)} {
-		err := db.CreateTable(model, &orm.CreateTableOptions{
-			Temp: true,
-		})
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }

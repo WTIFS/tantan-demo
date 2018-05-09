@@ -5,17 +5,22 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"fmt"
+	"encoding/json"
+	"github.com/WTIFS/tantan-demo/model"
+	"github.com/WTIFS/tantan-demo/service"
+	"strconv"
 )
 
 func main() {
 	r := mux.NewRouter()
+	s := r.PathPrefix("/users").Subrouter()
 	r.HandleFunc("/", HomeHandler)
 	r.HandleFunc("/articles/{category}", categoryHandler)
 
-	r.HandleFunc("/user", userAdditionHandler).Methods("POST")
-	r.HandleFunc("/user", userListHandler).Methods("GET")
-	r.HandleFunc("/relationship", relationshipListAddHandler).Methods("GET")
-	r.HandleFunc("/relationship", relationshipUpdateAddHandler).Methods("PUT")
+	s.HandleFunc("/", userAdditionHandler).Methods("POST")
+	s.HandleFunc("/", userListHandler).Methods("GET")
+	s.HandleFunc("/{user_id}/relationships", relationshipListAddHandler).Methods("GET")
+	s.HandleFunc("/{user_id}/relationships/{other_user_id}", relationshipUpdateAddHandler).Methods("PUT")
 
 	serverMsg := http.ListenAndServe(":8000", r)
 	log.Fatal(serverMsg)
@@ -50,7 +55,26 @@ $curl -XPOST -d '{"name":"Alice"}' "http://localhost:80/users"
 }
  */
 func userAdditionHandler(w http.ResponseWriter, r *http.Request) {
+	//name := r.FormValue("name")
+	//mobile := r.FormValue("mobile")
+	//u := &model.User{
+	//	Name: name,
+	//	Mobile: mobile,
+	//}
+	var u *model.User
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&u); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
 
+	if _, err := service.AddUser(u); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, u)
 }
 
 
@@ -74,7 +98,12 @@ $curl -XGET "http://localhost:80/users"
 ]
  */
 func userListHandler(w http.ResponseWriter, r *http.Request) {
-
+	userList, err := service.ListUsers()
+	if (err != nil) {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+	} else {
+		respondWithJSON(w, http.StatusOK, userList)
+	}
 }
 
 
@@ -104,7 +133,19 @@ $curl -XGET "http://localhost:80/users/11231244213/relationships"
 ]
  */
 func relationshipListAddHandler(w http.ResponseWriter, r *http.Request) {
-
+	vars := mux.Vars(r)
+	userIdStr := vars["user_id"]
+	userId, err := strconv.ParseInt(userIdStr, 10, 64)
+	if (err != nil) {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+	} else {
+		relationList, err:= service.ListRelationsByUserId(userId)
+		if (err != nil) {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		} else {
+			respondWithJSON(w, http.StatusOK, relationList)
+		}
+	}
 }
 
 
@@ -142,3 +183,15 @@ func relationshipUpdateAddHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
+func respondWithError(w http.ResponseWriter, code int, message string) {
+	respondWithJSON(w, code, map[string]string{"error": message})
+}
+
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, _ := json.Marshal(payload)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
+}
