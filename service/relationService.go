@@ -8,13 +8,15 @@ import (
 
 //insert or update relationship
 func UpsertRelationship(relationship1 *model.Relationship) (*model.Relationship, error) {
-	dao.UpsertRelationship(relationship1)
-	relationship2, err := dao.GetRelationByUserId(relationship1.ToUserId, relationship1.FromUserId)
-	if (err != nil) {
-		return relationship1, err
+	err1 := dao.UpsertRelationship(relationship1)
+	relationship2, err2 := dao.GetRelationByUserId(relationship1.FromUserId, relationship1.ToUserId)
+	if (err1 != nil) {
+		return relationship1, err1
 	}
-	if (relationship1.State == constants.RELATIONSHIP_STATE_LIKED && relationship1.State == relationship2.State) {
-		relationship1.State = constants.RELATIONSHIP_STATE_MATCHED
+	if (err2 == nil) { //relationship2 found
+		if (relationship1.State == constants.RELATIONSHIP_STATE_LIKED && relationship2.State == constants.RELATIONSHIP_STATE_LIKED) {
+			relationship1.State = constants.RELATIONSHIP_STATE_MATCHED
+		}
 	}
 	return relationship1, nil
 }

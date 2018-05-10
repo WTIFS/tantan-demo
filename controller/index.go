@@ -219,6 +219,7 @@ func relationshipAddHandler(w http.ResponseWriter, r *http.Request) {
 
 	res, err3 := service.UpsertRelationship(relationship)
 	if (err3 != nil) {
+		panic(err3)
 		respondWithError(w, http.StatusBadRequest, err3.Error())
 		return
 	}

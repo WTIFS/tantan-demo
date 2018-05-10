@@ -22,7 +22,7 @@ func UpsertRelationship(relationship *model.Relationship) error {
 	defer db.Close()
 
 	_, err := db.Model(relationship).
-		OnConflict("(from_user_id) DO UPDATE").
+		OnConflict("(from_user_id, to_user_id) DO UPDATE").
 		Set("state=?state").
 		Insert()
 	return err

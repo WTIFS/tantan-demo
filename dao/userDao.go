@@ -9,8 +9,21 @@ import (
 //add a user
 func AddUser(user *model.User) (*model.User, error) {
 	db := GetConn()
+	defer db.Close()
 	_, err := db.Model(user).Returning("*").Insert()
 	if (err != nil) {
+		panic(err)
+	}
+	return user, err
+}
+
+func GetUserById(id int64) (model.User, error) {
+	db := GetConn()
+	defer db.Close()
+	// Select user by primary key.
+	user := model.User{Name: "test1"}
+	err := db.Select(&user)
+	if err != nil {
 		panic(err)
 	}
 	return user, err

@@ -6,6 +6,7 @@ import (
 )
 
 type Relationship struct {
+	Id int64 `json:"-"`
 	FromUserId int64 `json:"-"`
 	ToUserId int64 `json:"user_id"`
 	State string `json:"state"`
