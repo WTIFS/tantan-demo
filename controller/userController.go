@@ -1,43 +1,20 @@
-package main
+package controller
 
 import (
-	"net/http"
 	"github.com/gorilla/mux"
-	"log"
-	"fmt"
-	"encoding/json"
-	"github.com/WTIFS/tantan-demo/model"
+	"net/http"
 	"github.com/WTIFS/tantan-demo/service"
+	"github.com/WTIFS/tantan-demo/model"
+	"encoding/json"
 	"strconv"
 )
 
-func main() {
-	r := mux.NewRouter()
-	s := r.PathPrefix("/users").Subrouter()
-	r.HandleFunc("/", HomeHandler)
-	r.HandleFunc("/articles/{category}", categoryHandler)
-
+func HandlerUser (r *mux.Route) {
+	s := r.Subrouter()
 	s.HandleFunc("", userAdditionHandler).Methods("POST")
 	s.HandleFunc("", userListHandler).Methods("GET")
 	s.HandleFunc("/{user_id}/relationships", relationshipListHandler).Methods("GET")
 	s.HandleFunc("/{user_id}/relationships/{other_user_id}", relationshipAddHandler).Methods("PUT")
-
-	serverMsg := http.ListenAndServe(":8000", r)
-	log.Fatal(serverMsg)
-
-
-}
-
-func categoryHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "param: %v", vars["category"])
-}
-
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Hello!\n"))
-	//fmt.Fprintf(w, "Hello!")
 }
 
 //add user
@@ -82,7 +59,6 @@ func userAdditionHandler(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, u)
 }
 
-
 //list users
 /**
 GET /users
@@ -113,7 +89,6 @@ func userListHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithJSON(w, http.StatusOK, userList)
 	}
 }
-
 
 //list relationship
 /**
@@ -226,17 +201,4 @@ func relationshipAddHandler(w http.ResponseWriter, r *http.Request) {
 	res.SetType()
 	respondWithJSON(w, http.StatusOK, res)
 
-}
-
-
-func respondWithError(w http.ResponseWriter, code int, message string) {
-	respondWithJSON(w, code, map[string]string{"error": message})
-}
-
-func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, _ := json.Marshal(payload)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(response)
 }

@@ -21,7 +21,7 @@ func GetUserById(id int64) (model.User, error) {
 	db := GetConn()
 	defer db.Close()
 	// Select user by primary key.
-	user := model.User{Name: "test1"}
+	user := model.User{Id: id}
 	err := db.Select(&user)
 	if err != nil {
 		panic(err)

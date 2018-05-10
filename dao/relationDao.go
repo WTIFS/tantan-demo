@@ -11,8 +11,11 @@ func GetRelationByUserId(fromUserId int64, toUserId int64) (model.Relationship, 
 
 	var err error
 
-	relationship := model.Relationship{FromUserId: fromUserId, ToUserId: toUserId}
-	err = db.Select(&relationship)
+	var relationship model.Relationship
+	err = db.Model(&relationship).
+		Where("from_user_id=?", fromUserId).
+		Where("to_user_id=?", toUserId).
+		Select()
 	return relationship, err
 }
 

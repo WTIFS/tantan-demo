@@ -9,7 +9,7 @@ import (
 //insert or update relationship
 func UpsertRelationship(relationship1 *model.Relationship) (*model.Relationship, error) {
 	err1 := dao.UpsertRelationship(relationship1)
-	relationship2, err2 := dao.GetRelationByUserId(relationship1.FromUserId, relationship1.ToUserId)
+	relationship2, err2 := dao.GetRelationByUserId(relationship1.ToUserId, relationship1.FromUserId)
 	if (err1 != nil) {
 		return relationship1, err1
 	}

@@ -17,15 +17,15 @@ func main() {
 	//service.AddUser(u)
 
 
-	user, err := dao.GetUserById(1)
-	fmt.Println(user)
-	if (err != nil) {
-		panic(err)
-	}
+	//user, err := dao.GetUserById(1)
+	//fmt.Println(user)
+	//if (err != nil) {
+	//	panic(err)
+	//}
 
 	dao.ListUsers()
 	dao.ListRelationsByUserId(1)
-	a, b := dao.GetRelationByUserId(2,3)
+	a, b := dao.GetRelationByUserId(1,2)
 	fmt.Println(a)
 	fmt.Println(b)
 }
