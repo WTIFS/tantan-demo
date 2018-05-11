@@ -11,8 +11,7 @@ type User struct {
 	// tableName struct{} `sql:"users, alias:u"`
 	Id int64 `json:"id"`// Id is automatically detected as primary key
 	Name string `json:"name"`
-	Type string `sql:"-" json:"type"`
-	//Birthday time.Time `sql:"-"` // - is used to ignore field
+	Type string `sql:"-" json:"type"` // - is used to ignore field
 }
 
 func (u *User) SetType() {

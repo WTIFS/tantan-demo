@@ -32,13 +32,9 @@ $curl -XPOST -d '{"name":"Alice"}' "http://localhost:80/users"
 }
  */
 func userAdditionHandler(w http.ResponseWriter, r *http.Request) {
-	//name := r.FormValue("name")
-	//mobile := r.FormValue("mobile")
-	//u := &model.User{
-	//	Name: name,
-	//	Mobile: mobile,
-	//}
 	var u *model.User
+
+	//check request body
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&u); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -51,6 +47,7 @@ func userAdditionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//add user
 	if _, err := service.AddUser(u); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
