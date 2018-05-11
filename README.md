@@ -7,19 +7,19 @@
 
 ## Project Structure 项目结构
 
-- constants //常量
+- constants 常量
   - relationship
-- controller //路由层
-  - common //路由层的公共方法
+- controller 路由层
+  - common 路由层的公共方法
   - userController 
-- dao //数据库交互层
-  - baseDao //dao层的公共方法
+- dao 数据库交互层
+  - baseDao dao层的公共方法
   - relationDao
   - userDao
-- model //模型类
+- model 模型类
   - relationship
   - user
-- service //逻辑层
+- service 逻辑层
   - relationshipService
   - userService
 - test 测试
