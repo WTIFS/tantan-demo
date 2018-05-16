@@ -29,9 +29,9 @@
 
 ## Environment Setup 运行环境设置
 1. Make sure you install go, PostgreSQL and govendor
-2. Clone this project to $GOPATH/src/
+2. Clone this project to $GOPATH/src/github.com/WTIFS/
 3. Edit config/pg.go to connect your PostgetSQL
-4. Run the following command to fetch dependencies: 
+4. Run the following command to fetch dependencies (gorilla and go-pg): 
     ```bash
         cd vendor
         govendor sync
@@ -39,7 +39,8 @@
 5. Run the following command to prepare the database:
     ```
         cd sql
-        pwd //copy the path here
+        pwd 
+        //copy the path here of last step
         psql $NAME OF YOUR DATABASE postgres $THE PATH OF LAST STEP
     ```
 5. Run the following command to start the project
