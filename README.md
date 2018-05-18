@@ -41,7 +41,7 @@
         cd sql
         pwd 
         //copy the path here of last step
-        psql $NAME OF YOUR DATABASE postgres $THE PATH OF LAST STEP
+        psql $NAME OF YOUR DATABASE postgres -f $THE PATH OF LAST STEP/create_db.sql
     ```
 5. Run the following command to start the project
     ```bash
