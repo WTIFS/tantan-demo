@@ -1,8 +1,7 @@
-# tantan-demo
+# demo
 
 ## Project Description 项目描述
-- Tantan Back-End Developer Test 
-- The task is to implement a basic RESTful HTTP service in Go for a simplified Tantan backend:
+- The task is to implement a basic RESTful HTTP service in Go for a simplified ** backend:
                                    Adding users and swiping other people in order to find a match. 
 
 ## Project Structure 项目结构
